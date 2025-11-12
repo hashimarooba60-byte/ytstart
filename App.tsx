@@ -5,6 +5,7 @@ import Sidebar from './components/layout/Sidebar';
 import HomePage from './pages/HomePage';
 import WatchPage from './pages/WatchPage';
 import AdminPage from './pages/AdminPage';
+import UploadPage from './pages/UploadPage';
 import { auth } from './services/firebase';
 import type { AppUser } from './types';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -62,6 +63,7 @@ function App() {
                         <Routes>
                             <Route path="/" element={<HomePage />} />
                             <Route path="/watch/:id" element={<WatchPage />} />
+                            <Route path="/upload" element={user ? <UploadPage /> : <HomePage />} />
                             <Route path="/admin" element={user?.isAdmin ? <AdminPage /> : <HomePage />} />
                         </Routes>
                     </main>

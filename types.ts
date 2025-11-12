@@ -11,6 +11,11 @@ export interface Video {
   duration: string;
   videoUrl?: string;
   description?: string;
+  
+  // Fields for user-uploaded content from Firestore
+  uploaderId?: string;
+  uploaderName?: string;
+  createdAt?: any; // To handle Firebase Timestamps
 }
 
 export interface Comment {

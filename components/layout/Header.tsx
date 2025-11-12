@@ -66,9 +66,9 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                     <>
                         {user ? (
                             <>
-                                <button className="p-2 rounded-full hover:bg-zinc-700">
+                                <Link to="/upload" className="p-2 rounded-full hover:bg-zinc-700">
                                     <VideoPlusIcon className="h-6 w-6" />
-                                </button>
+                                </Link>
                                 <button className="p-2 rounded-full hover:bg-zinc-700">
                                     <BellIcon className="h-6 w-6" />
                                 </button>
