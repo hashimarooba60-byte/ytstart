@@ -1,28 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import VideoCard from '../components/VideoCard';
-import { MOCK_VIDEOS } from '../constants';
+import { MOCK_VIDEOS, timeAgo, formatViews } from '../constants';
 import { db } from '../services/firebase';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import type { Video } from '../types';
-
-// Helper function to format Firestore Timestamps into a readable "time ago" string
-const timeAgo = (timestamp: any): string => {
-    if (!timestamp?.toDate) return 'just now';
-    const date = timestamp.toDate();
-    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-
-    let interval = seconds / 31536000;
-    if (interval > 1) return `${Math.floor(interval)} years ago`;
-    interval = seconds / 2592000;
-    if (interval > 1) return `${Math.floor(interval)} months ago`;
-    interval = seconds / 86400;
-    if (interval > 1) return `${Math.floor(interval)} days ago`;
-    interval = seconds / 3600;
-    if (interval > 1) return `${Math.floor(interval)} hours ago`;
-    interval = seconds / 60;
-    if (interval > 1) return `${Math.floor(interval)} minutes ago`;
-    return `${Math.floor(seconds)} seconds ago`;
-};
 
 const HomePage: React.FC = () => {
     const [videos, setVideos] = useState<Video[]>([]);
@@ -36,21 +17,16 @@ const HomePage: React.FC = () => {
                 const data = doc.data();
                 return {
                     id: doc.id,
-                    title: data.title,
-                    description: data.description,
-                    thumbnailUrl: data.thumbnailUrl,
-                    videoUrl: data.videoUrl,
+                    ...data,
+                    uploadedAt: timeAgo(data.createdAt),
+                    views: data.views || 0, // Use Firestore views or default to 0
                     channelName: data.uploaderName,
                     channelAvatarUrl: data.uploaderAvatarUrl || `https://picsum.photos/seed/${data.uploaderId}/40/40`,
-                    views: `${Math.floor(Math.random() * 1000)}K views`, // Mocking views
-                    uploadedAt: timeAgo(data.createdAt),
-                    duration: 'N/A', // Mocking duration
+                    duration: 'N/A', // Duration metadata requires more complex processing
                 } as Video;
             });
             
-            // Combine fetched videos with mock videos for a fuller homepage
-            const combinedVideos = [...videosData, ...MOCK_VIDEOS.filter(mock => !videosData.find(v => v.id === mock.id))];
-            setVideos(combinedVideos);
+            setVideos(videosData);
             setLoading(false);
         }, (error) => {
             console.error("Error fetching videos: ", error);
@@ -60,6 +36,12 @@ const HomePage: React.FC = () => {
 
         return () => unsubscribe();
     }, []);
+
+    const formatVideoCardViews = (video: Video) => {
+      // Mocks might have string views, Firestore has numbers
+      if (typeof video.views === 'string') return video.views;
+      return formatViews(video.views);
+    }
 
     return (
         <div className="p-4 md:p-6">
@@ -73,11 +55,16 @@ const HomePage: React.FC = () => {
                 </div>
             </div>
             {loading ? (
-                 <p>Loading videos...</p>
+                 <div className="text-center py-10">Loading videos...</div>
+            ) : videos.length === 0 ? (
+                 <div className="text-center py-10 text-zinc-400">
+                    <h2 className="text-xl font-semibold">No videos yet</h2>
+                    <p>Be the first to upload a video!</p>
+                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
                     {videos.map(video => (
-                        <VideoCard key={video.id} video={video} />
+                        <VideoCard key={video.id} video={{...video, views: formatVideoCardViews(video)}} />
                     ))}
                 </div>
             )}

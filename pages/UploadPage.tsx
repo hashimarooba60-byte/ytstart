@@ -58,6 +58,8 @@ const UploadPage: React.FC = () => {
                         uploaderName: user.displayName,
                         uploaderAvatarUrl: user.photoURL,
                         createdAt: serverTimestamp(),
+                        views: 0,
+                        likes: [],
                         // Using a placeholder for thumbnail as client-side generation is complex
                         thumbnailUrl: `https://picsum.photos/seed/${Date.now()}/400/225`,
                     });

@@ -1,31 +1,40 @@
-import { User as FirebaseUser } from 'firebase/auth';
+import { User as FirebaseUser, Timestamp } from 'firebase/auth';
 
 export interface Video {
   id: string;
-  thumbnailUrl: string;
   title: string;
-  channelName: string;
-  channelAvatarUrl: string;
-  views: string;
-  uploadedAt: string;
-  duration: string;
-  videoUrl?: string;
-  description?: string;
+  description: string;
+  thumbnailUrl: string;
+  videoUrl: string;
   
-  // Fields for user-uploaded content from Firestore
-  uploaderId?: string;
-  uploaderName?: string;
-  createdAt?: any; // To handle Firebase Timestamps
+  uploaderId: string;
+  uploaderName: string;
+  uploaderAvatarUrl: string;
+  
+  createdAt: Timestamp;
+  
+  // Dynamic fields
+  views: number;
+  likes: string[]; // Array of user IDs who liked the video
+  
+  // For display purposes, to be formatted
+  uploadedAt: string; 
+  duration?: string;
+  channelName?: string; // a.k.a uploaderName
+  channelAvatarUrl?: string; // a.k.a uploaderAvatarUrl
 }
 
 export interface Comment {
   id: string;
+  authorId: string;
   authorName: string;
   authorAvatarUrl: string;
   text: string;
+  createdAt: Timestamp;
   likes: number;
+  
+  // For display purposes
   postedAt: string;
-  replies?: Comment[];
 }
 
 export interface AppUser extends FirebaseUser {
