@@ -3,7 +3,7 @@ import type { Video } from './types';
 
 export const SverseLogo = () => (
     <div className="flex items-center space-x-2">
-        <svg xmlns="http://www.w.org/2000/svg" className="h-8 w-8 text-red-500" viewBox="0 0 24 24" fill="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" viewBox="0 0 24 24" fill="currentColor">
             <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-8.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L1 12c0-2.19.16-3.8.44-4.83.25-.9.83 1.48 1.73 1.73.47-.13 1.33.22 2.65.28 1.3.07 2.49.1 3.59.1L12 5c4.19 0 6.8.16 8.83.44.9.25 1.48.83 1.73 1.73z"></path>
         </svg>
         <span className="text-2xl font-bold tracking-tighter">Sverse</span>
@@ -11,7 +11,7 @@ export const SverseLogo = () => (
 );
 
 export const HamburgerIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg {...props} xmlns="http://www.w.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+    <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
     </svg>
 );
@@ -23,7 +23,7 @@ export const SearchIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export const MicIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg {...props} xmlns="http://www.w.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" >
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" >
     <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 016 0v8.25a3 3 0 01-3 3z" />
   </svg>
 );
@@ -58,6 +58,24 @@ export const MOCK_VIDEOS: Video[] = Array.from({ length: 20 }).map((_, i) => ({
   uploaderAvatarUrl: `https://picsum.photos/seed/channel${i%3+1}/40/40`,
   createdAt: null,
   likes: [],
+}));
+
+
+export const MOCK_SHORTS: Video[] = Array.from({ length: 10 }).map((_, i) => ({
+  id: `short_${i + 1}`,
+  thumbnailUrl: `https://picsum.photos/seed/s${i+1}/225/400`,
+  videoUrl: '',
+  title: `Amazing Short Clip #${i + 1}`,
+  channelName: `Creator ${i % 4 + 1}`,
+  views: Math.floor(Math.random() * 5000000),
+  uploadedAt: `${i + 1} hours ago`,
+  description: `A cool short video.`,
+  uploaderId: `mock_creator_${i%4+1}`,
+  uploaderName: `Creator ${i % 4 + 1}`,
+  uploaderAvatarUrl: `https://picsum.photos/seed/creator${i%4+1}/40/40`,
+  createdAt: null,
+  likes: [],
+  isShort: true,
 }));
 
 // Helper function to format Firestore Timestamps into a readable "time ago" string

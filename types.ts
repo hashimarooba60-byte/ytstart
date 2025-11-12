@@ -23,6 +23,7 @@ export interface Video {
   duration?: string;
   channelName?: string; // a.k.a uploaderName
   channelAvatarUrl?: string; // a.k.a uploaderAvatarUrl
+  isShort?: boolean;
 }
 
 export interface Comment {

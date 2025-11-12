@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         <header className="sticky top-0 z-50 flex items-center justify-between h-14 px-4 bg-zinc-900/95 backdrop-blur-sm border-b border-zinc-800">
             {/* Left Section */}
             <div className="flex items-center space-x-4">
-                <button onClick={toggleSidebar} className="p-2 rounded-full hover:bg-zinc-700 focus:outline-none">
+                <button onClick={toggleSidebar} className="p-2 rounded-full hover:bg-zinc-700 focus:outline-none hidden md:block">
                     <HamburgerIcon className="h-6 w-6" />
                 </button>
                 <Link to="/" className="flex-shrink-0">
@@ -66,7 +66,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
                     <>
                         {user ? (
                             <>
-                                <Link to="/upload" className="p-2 rounded-full hover:bg-zinc-700">
+                                <Link to="/upload" className="p-2 rounded-full hover:bg-zinc-700 hidden md:block">
                                     <VideoPlusIcon className="h-6 w-6" />
                                 </Link>
                                 <button className="p-2 rounded-full hover:bg-zinc-700">

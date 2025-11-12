@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { db } from '../services/firebase';
 import { doc, getDoc, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, updateDoc, arrayUnion, arrayRemove, increment } from 'firebase/firestore';
@@ -14,9 +14,18 @@ const WatchPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [newComment, setNewComment] = useState('');
+    const [playbackRate, setPlaybackRate] = useState(1);
+    const [showSpeedMenu, setShowSpeedMenu] = useState(false);
+    const videoRef = useRef<HTMLVideoElement>(null);
     
     const { id } = useParams<{ id: string }>();
     const { user } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (videoRef.current) {
+            videoRef.current.playbackRate = playbackRate;
+        }
+    }, [playbackRate]);
 
     useEffect(() => {
         if (!id) return;
@@ -39,7 +48,6 @@ const WatchPage: React.FC = () => {
                         channelAvatarUrl: videoData.uploaderAvatarUrl || `https://picsum.photos/seed/${videoData.uploaderId}/40/40`,
                     });
                     
-                    // Increment views in Firestore
                     await updateDoc(videoRef, {
                         views: increment(1)
                     });
@@ -85,11 +93,9 @@ const WatchPage: React.FC = () => {
 
         try {
             if (currentlyLiked) {
-                // Unlike
                 await updateDoc(videoRef, { likes: arrayRemove(user.uid) });
                 setVideo(prev => prev ? ({...prev, likes: prev.likes.filter(uid => uid !== user.uid)}) : null);
             } else {
-                // Like
                 await updateDoc(videoRef, { likes: arrayUnion(user.uid) });
                 setVideo(prev => prev ? ({...prev, likes: [...prev.likes, user.uid]}) : null);
             }
@@ -122,12 +128,33 @@ const WatchPage: React.FC = () => {
     if (!video) return <div className="text-center p-10">Video not found.</div>;
 
     const isLiked = user ? video.likes.includes(user.uid) : false;
+    const playbackRates = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2];
 
     return (
         <div className="flex flex-col lg:flex-row max-w-screen-2xl mx-auto p-4 gap-4">
             <div className="flex-grow lg:w-2/3">
-                <div className="aspect-video bg-black rounded-lg overflow-hidden">
-                    <video src={video.videoUrl} controls autoPlay className="w-full h-full"></video>
+                <div className="relative aspect-video bg-black rounded-lg overflow-hidden group">
+                    <video ref={videoRef} src={video.videoUrl} controls autoPlay className="w-full h-full"></video>
+                     <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="relative">
+                            <button onClick={() => setShowSpeedMenu(!showSpeedMenu)} className="p-2 bg-black/50 rounded-full">
+                               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </button>
+                            {showSpeedMenu && (
+                                <div className="absolute bottom-full right-0 mb-2 bg-black/80 rounded-lg py-1">
+                                    {playbackRates.map(rate => (
+                                        <button 
+                                            key={rate} 
+                                            onClick={() => { setPlaybackRate(rate); setShowSpeedMenu(false); }}
+                                            className={`block w-full text-left px-4 py-1.5 text-sm hover:bg-zinc-700 ${playbackRate === rate ? 'font-bold text-red-400' : ''}`}
+                                        >
+                                            {rate === 1 ? 'Normal' : `${rate}x`}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
                 <div className="py-4">
                     <h1 className="text-xl font-bold">{video.title}</h1>

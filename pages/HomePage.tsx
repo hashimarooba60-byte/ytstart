@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import VideoCard from '../components/VideoCard';
-import { MOCK_VIDEOS, timeAgo, formatViews } from '../constants';
+import { MOCK_VIDEOS, MOCK_SHORTS, timeAgo, formatViews } from '../constants';
 import { db } from '../services/firebase';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import type { Video } from '../types';
@@ -19,10 +19,10 @@ const HomePage: React.FC = () => {
                     id: doc.id,
                     ...data,
                     uploadedAt: timeAgo(data.createdAt),
-                    views: data.views || 0, // Use Firestore views or default to 0
+                    views: data.views || 0,
                     channelName: data.uploaderName,
                     channelAvatarUrl: data.uploaderAvatarUrl || `https://picsum.photos/seed/${data.uploaderId}/40/40`,
-                    duration: 'N/A', // Duration metadata requires more complex processing
+                    duration: 'N/A',
                 } as Video;
             });
             
@@ -30,18 +30,12 @@ const HomePage: React.FC = () => {
             setLoading(false);
         }, (error) => {
             console.error("Error fetching videos: ", error);
-            setVideos(MOCK_VIDEOS); // Fallback to mocks on error
+            setVideos(MOCK_VIDEOS); 
             setLoading(false);
         });
 
         return () => unsubscribe();
     }, []);
-
-    const formatVideoCardViews = (video: Video) => {
-      // Mocks might have string views, Firestore has numbers
-      if (typeof video.views === 'string') return video.views;
-      return formatViews(video.views);
-    }
 
     return (
         <div className="p-4 md:p-6">
@@ -56,17 +50,35 @@ const HomePage: React.FC = () => {
             </div>
             {loading ? (
                  <div className="text-center py-10">Loading videos...</div>
-            ) : videos.length === 0 ? (
-                 <div className="text-center py-10 text-zinc-400">
-                    <h2 className="text-xl font-semibold">No videos yet</h2>
-                    <p>Be the first to upload a video!</p>
-                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
-                    {videos.map(video => (
-                        <VideoCard key={video.id} video={{...video, views: formatVideoCardViews(video)}} />
-                    ))}
-                </div>
+                <>
+                    {/* Shorts Section */}
+                    <div className="mb-8">
+                        <h2 className="text-xl font-bold mb-4 flex items-center">
+                             <svg className="w-6 h-6 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            Shorts
+                        </h2>
+                        <div className="flex space-x-4 overflow-x-auto pb-4 -mb-4">
+                           {MOCK_SHORTS.map(video => <VideoCard key={video.id} video={video} />)}
+                        </div>
+                    </div>
+
+                    <div className="border-t border-zinc-800 my-6"></div>
+
+                    {/* Videos Grid */}
+                     {videos.length === 0 ? (
+                         <div className="text-center py-10 text-zinc-400">
+                            <h2 className="text-xl font-semibold">No videos yet</h2>
+                            <p>Be the first to upload a video!</p>
+                         </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
+                            {videos.map(video => (
+                                <VideoCard key={video.id} video={video} />
+                            ))}
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

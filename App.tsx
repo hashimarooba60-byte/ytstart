@@ -6,7 +6,8 @@ import HomePage from './pages/HomePage';
 import WatchPage from './pages/WatchPage';
 import AdminPage from './pages/AdminPage';
 import UploadPage from './pages/UploadPage';
-import AdminLoginPage from './pages/AdminLoginPage'; // New import
+import AdminLoginPage from './pages/AdminLoginPage';
+import BottomNav from './components/layout/BottomNav'; // New import
 import { auth } from './services/firebase';
 import type { AppUser } from './types';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -67,7 +68,7 @@ function App() {
                 <Header toggleSidebar={toggleSidebar} />
                 <div className="flex flex-1">
                     <Sidebar isOpen={isSidebarOpen} />
-                    <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-60' : 'ml-0'}`}>
+                    <main className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'lg:ml-60' : 'ml-0'} pb-16 md:pb-0`}>
                         <Routes>
                             <Route path="/" element={<HomePage />} />
                             <Route path="/watch/:id" element={<WatchPage />} />
@@ -77,6 +78,7 @@ function App() {
                         </Routes>
                     </main>
                 </div>
+                <BottomNav />
             </div>
         </AuthContext.Provider>
     );
