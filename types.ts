@@ -1,4 +1,5 @@
-import { User as FirebaseUser, Timestamp } from 'firebase/auth';
+import { User as FirebaseUser } from 'firebase/auth';
+import { Timestamp } from 'firebase/firestore';
 
 export interface Video {
   id: string;

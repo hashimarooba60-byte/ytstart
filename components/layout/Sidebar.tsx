@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 interface SidebarProps {
@@ -26,6 +26,8 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, label }) => (
 );
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
+    const [isMenuOpen, setIsMenuOpen] = useState(true);
+
     const mainNavItems = [
         { to: "/", icon: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h7.5" /></svg>, label: "Home" },
         { to: "/shorts", icon: <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" /></svg>, label: "Shorts" },
@@ -43,13 +45,30 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen }) => {
                 isOpen ? 'translate-x-0' : '-translate-x-full'
             } lg:translate-x-0 overflow-y-auto px-2 pb-4 border-r border-zinc-800`}
         >
-            <nav className="flex flex-col space-y-1 p-2">
-                {mainNavItems.map(item => <NavItem key={item.label} to={item.to} icon={item.icon} label={item.label} />)}
-            </nav>
-            <div className="border-t border-zinc-700 my-4"></div>
-            <nav className="flex flex-col space-y-1 p-2">
-                {secondaryNavItems.map(item => <NavItem key={item.label} to={item.to} icon={item.icon} label={item.label} />)}
-            </nav>
+            <div className="p-2">
+                <button
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    className="flex items-center justify-between w-full p-2.5 rounded-lg text-sm font-medium hover:bg-zinc-700"
+                    aria-expanded={isMenuOpen}
+                >
+                    <span className="font-semibold">Menu</span>
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className={`w-5 h-5 transition-transform ${isMenuOpen ? 'rotate-180' : ''}`}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </button>
+
+                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isMenuOpen ? 'max-h-screen' : 'max-h-0'}`}>
+                    <div className="pt-2">
+                        <nav className="flex flex-col space-y-1">
+                            {mainNavItems.map(item => <NavItem key={item.label} to={item.to} icon={item.icon} label={item.label} />)}
+                        </nav>
+                        <div className="border-t border-zinc-700 my-4"></div>
+                        <nav className="flex flex-col space-y-1">
+                            {secondaryNavItems.map(item => <NavItem key={item.label} to={item.to} icon={item.icon} label={item.label} />)}
+                        </nav>
+                    </div>
+                </div>
+            </div>
         </aside>
     );
 };

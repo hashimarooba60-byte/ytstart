@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../App';
 
 const StatCard = ({ title, value, icon }: { title: string; value: string; icon: React.ReactNode }) => (
@@ -12,19 +13,25 @@ const StatCard = ({ title, value, icon }: { title: string; value: string; icon: 
 );
 
 const AdminPage: React.FC = () => {
-    const { user } = useContext(AuthContext);
+    const { setAdminLoggedIn } = useContext(AuthContext);
+    const navigate = useNavigate();
 
-    if (!user || !user.isAdmin) {
-        return (
-            <div className="flex items-center justify-center h-full p-6">
-                <p className="text-red-500">Access Denied. You must be an administrator to view this page.</p>
-            </div>
-        );
-    }
+    const handleLogout = () => {
+        setAdminLoggedIn(false);
+        navigate('/admin-login');
+    };
 
     return (
         <div className="p-4 md:p-6">
-            <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
+            <div className="flex justify-between items-center mb-6">
+                <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+                <button 
+                    onClick={handleLogout} 
+                    className="bg-zinc-700 hover:bg-zinc-600 px-4 py-2 rounded-lg font-semibold text-sm"
+                >
+                    Logout
+                </button>
+            </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <StatCard title="Total Videos" value="1,250" icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>} />
