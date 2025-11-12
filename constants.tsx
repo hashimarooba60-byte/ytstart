@@ -1,104 +1,119 @@
 import React from 'react';
 import type { Video } from './types';
 
-export const SverseLogo = () => (
+// Icons
+export const SverseLogo: React.FC = () => (
     <div className="flex items-center space-x-2">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-8.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L1 12c0-2.19.16-3.8.44-4.83.25-.9.83 1.48 1.73 1.73.47-.13 1.33.22 2.65.28 1.3.07 2.49.1 3.59.1L12 5c4.19 0 6.8.16 8.83.44.9.25 1.48.83 1.73 1.73z"></path>
+        <svg className="h-8 w-auto text-red-500" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21.582,6.186c-0.23-0.854-0.906-1.53-1.76-1.76C18.254,4,12,4,12,4S5.746,4,4.178,4.426 c-0.854,0.23-1.53,0.906-1.76,1.76C2,7.754,2,12,2,12s0,4.246,0.418,5.814c0.23,0.854,0.906,1.53,1.76,1.76 C5.746,20,12,20,12,20s6.254,0,7.822-0.426c0.854-0.23,1.53-0.906,1.76-1.76C22,16.246,22,12,22,12S22,7.754,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/>
         </svg>
-        <span className="text-2xl font-bold tracking-tighter">Sverse</span>
+        <span className="text-xl font-bold tracking-tighter">Sverse</span>
     </div>
 );
 
-export const HamburgerIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+
+export const HamburgerIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
     </svg>
 );
 
-export const SearchIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+export const SearchIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
     </svg>
 );
 
-export const MicIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 016 0v8.25a3 3 0 01-3 3z" />
+export const MicIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-14 0m7 8v4m0 0H8m4 0h4m-4-8a3 3 0 01-6 0V6a3 3 0 016 0v5z" />
+    </svg>
+);
+
+export const BellIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+    </svg>
+);
+
+export const VideoPlusIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    </svg>
+);
+
+export const ThreeDotsIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01" />
+    </svg>
+);
+
+export const ThumbsDownIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
+    <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.106-1.79l-.05-.025A4 4 0 0011.057 2H5.642a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l2.4-4.8a4 4 0 00.8-2.4z" />
   </svg>
 );
 
-export const BellIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+export const CommentIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
     </svg>
 );
 
-export const VideoPlusIcon = (props: React.SVGProps<SVGSVGElement>) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 010 .656l-5.603 3.113a.375.375 0 01-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112z" />
+export const ShareIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 20 20" fill="currentColor">
+      <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
     </svg>
 );
 
+// Utility Functions
+export const formatViews = (views: number): string => {
+    if (!views) return `0 views`;
+    if (views >= 1_000_000_000) return `${(views / 1_000_000_000).toFixed(1).replace(/\.0$/, '')}B`;
+    if (views >= 1_000_000) return `${(views / 1_000_000).toFixed(1).replace(/\.0$/, '')}M`;
+    if (views >= 1_000) return `${(views / 1_000).toFixed(1).replace(/\.0$/, '')}K`;
+    return `${views}`;
+};
 
-export const MOCK_VIDEOS: Video[] = Array.from({ length: 20 }).map((_, i) => ({
-  id: `video_${i + 1}`,
-  thumbnailUrl: `https://picsum.photos/seed/${i+1}/400/225`,
-  videoUrl: '', // Mock videos don't have a playable URL
-  title: `Epic Nature Documentary #${i + 1}: The Hidden World`,
-  channelName: `Nature Explorers ${i % 3 + 1}`,
-  channelAvatarUrl: `https://picsum.photos/seed/channel${i%3+1}/40/40`,
-  views: Math.floor(Math.random() * 1000000),
-  uploadedAt: `${i + 1} days ago`,
-  duration: `${Math.floor(Math.random() * 30) + 5}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`,
-  description: `This is a deep dive into the hidden world of nature. Explore the unseen and marvel at the beauty of our planet. In this episode, we look at the life cycle of the majestic sea turtle.`,
-  uploaderId: `mock_uploader_${i%3+1}`,
-  uploaderName: `Nature Explorers ${i % 3 + 1}`,
-  uploaderAvatarUrl: `https://picsum.photos/seed/channel${i%3+1}/40/40`,
-  createdAt: null,
-  likes: [],
-}));
-
-
-export const MOCK_SHORTS: Video[] = Array.from({ length: 10 }).map((_, i) => ({
-  id: `short_${i + 1}`,
-  thumbnailUrl: `https://picsum.photos/seed/s${i+1}/225/400`,
-  videoUrl: '',
-  title: `Amazing Short Clip #${i + 1}`,
-  channelName: `Creator ${i % 4 + 1}`,
-  views: Math.floor(Math.random() * 5000000),
-  uploadedAt: `${i + 1} hours ago`,
-  description: `A cool short video.`,
-  uploaderId: `mock_creator_${i%4+1}`,
-  uploaderName: `Creator ${i % 4 + 1}`,
-  uploaderAvatarUrl: `https://picsum.photos/seed/creator${i%4+1}/40/40`,
-  createdAt: null,
-  likes: [],
-  isShort: true,
-}));
-
-// Helper function to format Firestore Timestamps into a readable "time ago" string
 export const timeAgo = (timestamp: any): string => {
-    if (!timestamp?.toDate) return 'just now';
+    if (!timestamp || typeof timestamp.toDate !== 'function') return 'Just now';
     const date = timestamp.toDate();
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-
+    
     let interval = seconds / 31536000;
     if (interval > 1) return `${Math.floor(interval)} years ago`;
+    
     interval = seconds / 2592000;
     if (interval > 1) return `${Math.floor(interval)} months ago`;
+    
     interval = seconds / 86400;
     if (interval > 1) return `${Math.floor(interval)} days ago`;
+    
     interval = seconds / 3600;
     if (interval > 1) return `${Math.floor(interval)} hours ago`;
+    
     interval = seconds / 60;
     if (interval > 1) return `${Math.floor(interval)} minutes ago`;
+    
     return `${Math.floor(seconds)} seconds ago`;
 };
 
-export const formatViews = (views: number) => {
-    if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M views`;
-    if (views >= 1000) return `${(views / 1000).toFixed(1)}K views`;
-    return `${views} views`;
-};
+// Mock Data
+export const MOCK_VIDEOS: Video[] = Array.from({ length: 20 }, (_, i) => ({
+    id: `mock-${i + 1}`,
+    title: `Amazing Tech Gadgets You Can Buy Now #${i + 1}`,
+    thumbnailUrl: `https://picsum.photos/seed/${i + 1}/320/180`,
+    videoUrl: '',
+    duration: `${Math.floor(Math.random() * 10) + 2}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`,
+    channelName: `Tech Zone ${i % 3 + 1}`,
+    channelAvatarUrl: `https://picsum.photos/seed/channel${i % 3 + 1}/40/40`,
+    views: Math.floor(Math.random() * 10000000),
+    uploadedAt: `${Math.floor(Math.random() * 12) + 1} months ago`,
+    description: 'A mock video description.',
+    likes: [],
+    dislikes: [],
+    createdAt: null as any, // This would be a Firestore Timestamp
+    uploaderId: `uploader-${i % 3 + 1}`,
+    uploaderName: `Tech Zone ${i % 3 + 1}`,
+    isShort: i % 5 === 0
+}));

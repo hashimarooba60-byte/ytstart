@@ -4,7 +4,7 @@ import { db } from '../services/firebase';
 import { doc, getDoc, collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, updateDoc, arrayUnion, arrayRemove, increment } from 'firebase/firestore';
 import { AuthContext } from '../App';
 import type { Video, Comment } from '../types';
-import { timeAgo, formatViews, MOCK_VIDEOS } from '../constants';
+import { timeAgo, formatViews, MOCK_VIDEOS, ThumbsDownIcon } from '../constants';
 import VideoCard from '../components/VideoCard';
 
 const WatchPage: React.FC = () => {
@@ -44,6 +44,8 @@ const WatchPage: React.FC = () => {
                         ...videoData,
                         uploadedAt: timeAgo(videoData.createdAt),
                         views: (videoData.views || 0),
+                        likes: videoData.likes || [],
+                        dislikes: videoData.dislikes || [],
                         channelName: videoData.uploaderName,
                         channelAvatarUrl: videoData.uploaderAvatarUrl || `https://picsum.photos/seed/${videoData.uploaderId}/40/40`,
                     });
@@ -85,22 +87,41 @@ const WatchPage: React.FC = () => {
         setRelatedVideos(MOCK_VIDEOS.filter(v => v.id !== id).slice(0, 10));
     }, [id]);
     
-    const handleLike = async () => {
+    const handleLikeDislike = async (action: 'like' | 'dislike') => {
         if (!user || !id || !video) return;
         const videoRef = doc(db, 'videos', id);
         
-        const currentlyLiked = video.likes.includes(user.uid);
+        const isLiked = video.likes.includes(user.uid);
+        const isDisliked = video.dislikes.includes(user.uid);
+        
+        let newLikes = [...video.likes];
+        let newDislikes = [...video.dislikes];
 
-        try {
-            if (currentlyLiked) {
-                await updateDoc(videoRef, { likes: arrayRemove(user.uid) });
-                setVideo(prev => prev ? ({...prev, likes: prev.likes.filter(uid => uid !== user.uid)}) : null);
+        if (action === 'like') {
+            if (isLiked) {
+                newLikes = newLikes.filter(uid => uid !== user.uid);
             } else {
-                await updateDoc(videoRef, { likes: arrayUnion(user.uid) });
-                setVideo(prev => prev ? ({...prev, likes: [...prev.likes, user.uid]}) : null);
+                newLikes.push(user.uid);
+                if (isDisliked) {
+                    newDislikes = newDislikes.filter(uid => uid !== user.uid);
+                }
             }
+        } else { // dislike
+            if (isDisliked) {
+                newDislikes = newDislikes.filter(uid => uid !== user.uid);
+            } else {
+                newDislikes.push(user.uid);
+                if (isLiked) {
+                    newLikes = newLikes.filter(uid => uid !== user.uid);
+                }
+            }
+        }
+        
+        try {
+            await updateDoc(videoRef, { likes: newLikes, dislikes: newDislikes });
+            setVideo(prev => prev ? ({...prev, likes: newLikes, dislikes: newDislikes}) : null);
         } catch(e) {
-            console.error("Error updating likes", e);
+            console.error("Error updating likes/dislikes", e);
         }
     };
     
@@ -128,6 +149,7 @@ const WatchPage: React.FC = () => {
     if (!video) return <div className="text-center p-10">Video not found.</div>;
 
     const isLiked = user ? video.likes.includes(user.uid) : false;
+    const isDisliked = user ? video.dislikes.includes(user.uid) : false;
     const playbackRates = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2];
 
     return (
@@ -168,13 +190,13 @@ const WatchPage: React.FC = () => {
                         </div>
                         <div className="flex items-center space-x-2 mt-4 sm:mt-0">
                             <div className="flex items-center bg-zinc-800 rounded-full">
-                                <button onClick={handleLike} className={`px-4 py-2 flex items-center space-x-2 hover:bg-zinc-700 rounded-l-full ${isLiked ? 'text-blue-400' : ''}`}>
+                                <button onClick={() => handleLikeDislike('like')} className={`px-4 py-2 flex items-center space-x-2 hover:bg-zinc-700 rounded-l-full ${isLiked ? 'text-blue-400' : ''}`}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" /></svg>
                                     <span>{video.likes.length}</span>
                                 </button>
                                 <div className="w-px h-6 bg-zinc-600"></div>
-                                <button className="px-4 py-2 hover:bg-zinc-700 rounded-r-full">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.106-1.79l-.05-.025A4 4 0 0011.057 2H5.642a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l2.4-4.8a4 4 0 00.8-2.4z" /></svg>
+                                <button onClick={() => handleLikeDislike('dislike')} className={`px-4 py-2 hover:bg-zinc-700 rounded-r-full ${isDisliked ? 'text-blue-400' : ''}`}>
+                                    <ThumbsDownIcon className="h-5 w-5" />
                                 </button>
                             </div>
                             <button className="flex items-center space-x-2 bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-full">
@@ -185,7 +207,7 @@ const WatchPage: React.FC = () => {
                     </div>
                 </div>
                 <div className="bg-zinc-800 p-4 rounded-lg mt-4 text-sm">
-                    <div className="font-bold">{formatViews(video.views)} &bull; {video.uploadedAt}</div>
+                    <div className="font-bold">{formatViews(video.views)} views &bull; {video.uploadedAt}</div>
                     <p className="whitespace-pre-wrap mt-2">{video.description}</p>
                 </div>
                 

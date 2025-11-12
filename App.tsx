@@ -4,6 +4,7 @@ import Header from './components/layout/Header';
 import Sidebar from './components/layout/Sidebar';
 import HomePage from './pages/HomePage';
 import WatchPage from './pages/WatchPage';
+import ShortsPage from './pages/ShortsPage';
 import AdminPage from './pages/AdminPage';
 import UploadPage from './pages/UploadPage';
 import AdminLoginPage from './pages/AdminLoginPage';
@@ -72,6 +73,7 @@ function App() {
                         <Routes>
                             <Route path="/" element={<HomePage />} />
                             <Route path="/watch/:id" element={<WatchPage />} />
+                            <Route path="/shorts/:id" element={<ShortsPage />} />
                             <Route path="/upload" element={user ? <UploadPage /> : <HomePage />} />
                             <Route path="/admin-login" element={<AdminLoginPage />} />
                             <Route path="/admin" element={isAdminLoggedIn ? <AdminPage /> : <Navigate to="/admin-login" />} />

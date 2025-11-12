@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import type { Video } from '../types';
 import { formatViews } from '../constants';
@@ -9,10 +9,27 @@ interface VideoCardProps {
 }
 
 const VideoCard: React.FC<VideoCardProps> = ({ video, isVertical = true }) => {
-    // Horizontal card for "Up next" list
+    const videoRef = useRef<HTMLVideoElement>(null);
+
+    const handleMouseEnter = () => {
+        if (videoRef.current) {
+            videoRef.current.play().catch(error => {
+                // Autoplay was prevented.
+                console.log("Autoplay prevented for video card");
+            });
+        }
+    };
+
+    const handleMouseLeave = () => {
+        if (videoRef.current) {
+            videoRef.current.pause();
+            videoRef.current.currentTime = 0;
+        }
+    };
+
     if (!isVertical) {
         return (
-            <Link to={`/watch/${video.id}`} className="flex space-x-3 group">
+            <Link to={video.isShort ? `/shorts/${video.id}` : `/watch/${video.id}`} className="flex space-x-3 group">
                 <div className="flex-shrink-0 w-40 h-24 relative">
                     <img src={video.thumbnailUrl} alt={video.title} className="w-full h-full object-cover rounded-lg" />
                      <span className="absolute bottom-1 right-1 bg-black/80 text-white text-xs px-1.5 py-0.5 rounded">{video.duration}</span>
@@ -20,28 +37,39 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, isVertical = true }) => {
                 <div className="flex flex-col">
                     <h3 className="text-sm font-semibold text-white leading-snug group-hover:text-red-400 line-clamp-2">{video.title}</h3>
                     <div className="text-xs text-zinc-400 mt-1">{video.channelName}</div>
-                    <div className="text-xs text-zinc-400">{formatViews(video.views)} &bull; {video.uploadedAt}</div>
+                    <div className="text-xs text-zinc-400">{formatViews(video.views)} views &bull; {video.uploadedAt}</div>
                 </div>
             </Link>
-        )
+        );
     }
     
-    // Vertical card for Shorts
     if (video.isShort) {
         return (
-            <Link to={`/watch/${video.id}`} className="flex flex-col space-y-2 group w-48">
+            <Link 
+                to={`/shorts/${video.id}`} 
+                className="flex flex-col space-y-2 group w-full"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
                 <div className="relative">
-                    <img src={video.thumbnailUrl} alt={video.title} className="w-full object-cover rounded-xl aspect-[9/16]" />
+                    <video
+                        ref={videoRef}
+                        src={video.videoUrl}
+                        poster={video.thumbnailUrl}
+                        className="w-full object-cover rounded-xl aspect-[9/16] bg-zinc-800"
+                        muted
+                        loop
+                        playsInline
+                    />
                 </div>
                 <div>
                     <h3 className="text-md font-semibold text-white leading-snug group-hover:text-red-400 line-clamp-2">{video.title}</h3>
-                    <p className="text-sm text-zinc-400">{formatViews(video.views)}</p>
+                    <p className="text-sm text-zinc-400">{formatViews(video.views)} views</p>
                 </div>
             </Link>
         );
     }
 
-    // Default vertical card for main grid
     return (
         <Link to={`/watch/${video.id}`} className="flex flex-col space-y-2 group">
             <div className="relative">
@@ -53,7 +81,7 @@ const VideoCard: React.FC<VideoCardProps> = ({ video, isVertical = true }) => {
                 <div>
                     <h3 className="text-md font-semibold text-white leading-snug group-hover:text-red-400 line-clamp-2">{video.title}</h3>
                     <p className="text-sm text-zinc-400 mt-1">{video.channelName}</p>
-                    <p className="text-sm text-zinc-400">{formatViews(video.views)} &bull; {video.uploadedAt}</p>
+                    <p className="text-sm text-zinc-400">{formatViews(video.views)} views &bull; {video.uploadedAt}</p>
                 </div>
             </div>
         </Link>

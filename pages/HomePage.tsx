@@ -1,85 +1,88 @@
 import React, { useState, useEffect } from 'react';
 import VideoCard from '../components/VideoCard';
-import { MOCK_VIDEOS, MOCK_SHORTS, timeAgo, formatViews } from '../constants';
 import { db } from '../services/firebase';
-import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import type { Video } from '../types';
+import { timeAgo } from '../constants';
 
 const HomePage: React.FC = () => {
     const [videos, setVideos] = useState<Video[]>([]);
     const [loading, setLoading] = useState(true);
-    const categories = ["All", "Music", "Gaming", "Live", "React", "Comedy", "Programming", "Trailers", "News", "Sports"];
+    const [error, setError] = useState('');
 
     useEffect(() => {
-        const q = query(collection(db, "videos"), orderBy("createdAt", "desc"));
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const videosData: Video[] = querySnapshot.docs.map(doc => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    ...data,
-                    uploadedAt: timeAgo(data.createdAt),
-                    views: data.views || 0,
-                    channelName: data.uploaderName,
-                    channelAvatarUrl: data.uploaderAvatarUrl || `https://picsum.photos/seed/${data.uploaderId}/40/40`,
-                    duration: 'N/A',
-                } as Video;
-            });
-            
-            setVideos(videosData);
+        const fetchVideos = async () => {
+            setLoading(true);
+            setError('');
+            try {
+                const videosCollection = collection(db, 'videos');
+                const q = query(videosCollection, orderBy('createdAt', 'desc'), limit(50));
+                const videoSnapshot = await getDocs(q);
+                const videosList = videoSnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        uploadedAt: timeAgo(data.createdAt),
+                        channelName: data.uploaderName,
+                        channelAvatarUrl: data.uploaderAvatarUrl || `https://picsum.photos/seed/${data.uploaderId}/40/40`,
+                    } as Video
+                });
+                setVideos(videosList);
+            } catch (err) {
+                console.error("Error fetching videos: ", err);
+                setError('Failed to load videos. Please try again later.');
+            }
             setLoading(false);
-        }, (error) => {
-            console.error("Error fetching videos: ", error);
-            setVideos(MOCK_VIDEOS); 
-            setLoading(false);
-        });
+        };
 
-        return () => unsubscribe();
+        fetchVideos();
     }, []);
+
+    const shorts = videos.filter(v => v.isShort);
+    const regularVideos = videos.filter(v => !v.isShort);
+    
+    const renderContent = () => {
+        if (loading) {
+            return <div className="text-center p-10">Loading videos...</div>;
+        }
+        if (error) {
+            return <div className="text-center p-10 text-red-500">{error}</div>;
+        }
+        if (videos.length === 0) {
+            return <div className="text-center p-10">No videos found. Be the first to upload!</div>;
+        }
+
+        return (
+            <>
+                 {shorts.length > 0 && (
+                    <>
+                         <h2 className="text-xl font-bold mb-4 flex items-center">
+                            <svg className="h-6 w-6 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                            Shorts
+                         </h2>
+                         <div className="flex space-x-4 overflow-x-auto pb-4 mb-8 no-scrollbar">
+                            {shorts.map(video => (
+                                <div key={video.id} className="flex-shrink-0 w-40 sm:w-48 md:w-56">
+                                    <VideoCard video={video} />
+                                </div>
+                            ))}
+                        </div>
+                        <div className="border-t border-zinc-700 my-6"></div>
+                    </>
+                )}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
+                    {regularVideos.map(video => (
+                        <VideoCard key={video.id} video={video} />
+                    ))}
+                </div>
+            </>
+        )
+    }
 
     return (
         <div className="p-4 md:p-6">
-             <div className="sticky top-14 bg-zinc-900/95 py-2 -mx-4 px-4 md:-mx-6 md:px-6 mb-4 backdrop-blur-sm z-30">
-                <div className="flex space-x-3 overflow-x-auto pb-2 -mb-2">
-                    {categories.map((category) => (
-                        <button key={category} className="px-3 py-1.5 text-sm font-medium whitespace-nowrap rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors focus:bg-white focus:text-black">
-                            {category}
-                        </button>
-                    ))}
-                </div>
-            </div>
-            {loading ? (
-                 <div className="text-center py-10">Loading videos...</div>
-            ) : (
-                <>
-                    {/* Shorts Section */}
-                    <div className="mb-8">
-                        <h2 className="text-xl font-bold mb-4 flex items-center">
-                             <svg className="w-6 h-6 mr-2 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                            Shorts
-                        </h2>
-                        <div className="flex space-x-4 overflow-x-auto pb-4 -mb-4">
-                           {MOCK_SHORTS.map(video => <VideoCard key={video.id} video={video} />)}
-                        </div>
-                    </div>
-
-                    <div className="border-t border-zinc-800 my-6"></div>
-
-                    {/* Videos Grid */}
-                     {videos.length === 0 ? (
-                         <div className="text-center py-10 text-zinc-400">
-                            <h2 className="text-xl font-semibold">No videos yet</h2>
-                            <p>Be the first to upload a video!</p>
-                         </div>
-                    ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
-                            {videos.map(video => (
-                                <VideoCard key={video.id} video={video} />
-                            ))}
-                        </div>
-                    )}
-                </>
-            )}
+            {renderContent()}
         </div>
     );
 };

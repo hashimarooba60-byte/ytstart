@@ -1,44 +1,37 @@
-import { User as FirebaseUser } from 'firebase/auth';
-import { Timestamp } from 'firebase/firestore';
+import type { User } from 'firebase/auth';
+import type { Timestamp } from 'firebase/firestore';
+
+export interface AppUser extends User {
+    isAdmin: boolean;
+}
 
 export interface Video {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailUrl: string;
-  videoUrl: string;
-  
-  uploaderId: string;
-  uploaderName: string;
-  uploaderAvatarUrl: string;
-  
-  createdAt: Timestamp;
-  
-  // Dynamic fields
-  views: number;
-  likes: string[]; // Array of user IDs who liked the video
-  
-  // For display purposes, to be formatted
-  uploadedAt: string; 
-  duration?: string;
-  channelName?: string; // a.k.a uploaderName
-  channelAvatarUrl?: string; // a.k.a uploaderAvatarUrl
-  isShort?: boolean;
+    id: string;
+    title: string;
+    description: string;
+    thumbnailUrl: string;
+    videoUrl: string;
+    duration: string;
+    views: number;
+    likes: string[]; // array of user uids
+    dislikes: string[]; // array of user uids
+    isShort?: boolean;
+    channelName: string;
+    channelAvatarUrl: string;
+    uploadedAt: string; // Formatted string like "2 days ago"
+    createdAt: Timestamp; // Firestore Timestamp
+    uploaderId: string;
+    uploaderName: string;
+    uploaderAvatarUrl?: string;
 }
 
 export interface Comment {
-  id: string;
-  authorId: string;
-  authorName: string;
-  authorAvatarUrl: string;
-  text: string;
-  createdAt: Timestamp;
-  likes: number;
-  
-  // For display purposes
-  postedAt: string;
-}
-
-export interface AppUser extends FirebaseUser {
-    isAdmin?: boolean;
+    id: string;
+    text: string;
+    authorId: string;
+    authorName: string;
+    authorAvatarUrl: string;
+    createdAt: Timestamp; // Firestore Timestamp
+    postedAt: string; // Formatted string like "2 days ago"
+    likes: number;
 }
