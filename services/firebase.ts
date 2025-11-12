@@ -10,7 +10,7 @@ const firebaseConfig = {
   authDomain: "ytbee-a8deb.firebaseapp.com",
   databaseURL: "https://ytbee-a8deb-default-rtdb.firebaseio.com",
   projectId: "ytbee-a8deb",
-  storageBucket: "ytbee-a8deb.appspot.com",
+  storageBucket: "ytbee-a8deb.firebasestorage.app",
   messagingSenderId: "286068658853",
   appId: "1:286068658853:web:60aebfd7d7371d4068b34c",
   measurementId: "G-JT13B7SX5K"
