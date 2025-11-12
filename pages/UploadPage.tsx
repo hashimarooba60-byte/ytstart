@@ -17,6 +17,7 @@ const UploadPage: React.FC = () => {
     const [progress, setProgress] = useState(0);
     const [error, setError] = useState('');
     const [isShort, setIsShort] = useState(false);
+    const [videoDuration, setVideoDuration] = useState(0);
 
     const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -26,11 +27,9 @@ const UploadPage: React.FC = () => {
             videoElement.preload = 'metadata';
             videoElement.onloadedmetadata = () => {
                 window.URL.revokeObjectURL(videoElement.src);
-                if (videoElement.duration <= 16) {
-                    setIsShort(true);
-                } else {
-                    setIsShort(false);
-                }
+                const duration = videoElement.duration;
+                setVideoDuration(duration);
+                setIsShort(duration <= 16);
             };
             videoElement.src = URL.createObjectURL(file);
         }
@@ -80,19 +79,9 @@ const UploadPage: React.FC = () => {
             await thumbnailUploadTask;
             const thumbnailUrl = await getDownloadURL(thumbnailUploadTask.snapshot.ref);
             
-            // This is a placeholder; a more robust solution would use a server-side function to get duration.
-            const videoElementForDuration = document.createElement('video');
-            videoElementForDuration.src = videoUrl;
-            const duration = await new Promise<string>((resolve) => {
-                videoElementForDuration.onloadedmetadata = () => {
-                    const minutes = Math.floor(videoElementForDuration.duration / 60);
-                    const seconds = Math.floor(videoElementForDuration.duration % 60);
-                    resolve(`${minutes}:${String(seconds).padStart(2, '0')}`);
-                };
-                 // Fallback in case metadata doesn't load
-                setTimeout(() => resolve("0:00"), 2000);
-            });
-
+            const minutes = Math.floor(videoDuration / 60);
+            const seconds = Math.floor(videoDuration % 60);
+            const formattedDuration = `${minutes}:${String(seconds).padStart(2, '0')}`;
 
             // 3. Add video metadata to Firestore
             await addDoc(collection(db, 'videos'), {
@@ -107,7 +96,7 @@ const UploadPage: React.FC = () => {
                 likes: [],
                 dislikes: [],
                 isShort: isShort,
-                duration: duration, 
+                duration: formattedDuration, 
                 createdAt: serverTimestamp()
             });
 
