@@ -1,0 +1,5 @@
+{
+  "name": "Sverse",
+  "description": "A feature-rich video sharing platform inspired by YouTube, built with React, TypeScript, and Tailwind CSS. It includes a responsive interface for all screen sizes, user authentication, and a dedicated admin page for content management.",
+  "requestFramePermissions": []
+}
